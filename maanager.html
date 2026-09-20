@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="maanager.css">
+    <title>Manager Dashboard</title>
+</head>
+<body>
+    <div class="content">
+        <h3 class="title">Telsa Restaurant</h3>
+        <div class="left-side-panel">
+            <div class="header">
+                <img src="./images/telsa_light.png" class="pfp">
+                <label class="name">Mr. Telsa</label>
+            </div>
+
+            <div class="details">
+                <button class="btn1" id="account_details">Account Details</button>
+                <button class="btn1" id="attendance">Staff Attendance</button>
+                <button class="btn1" id="history">Order History</button>
+                <button class="btn1" id="accepted">Confirmed Orders</button>
+                <button class="btn1" id="returned_btn">Returned Orders</button>
+                <button class="btn1">Stock Inventory</button>
+                <button class="btn1">Random Button</button>
+            </div>
+            
+            <div class="out">
+                <button class="sign-out">Sign Out</button>
+            </div>
+            
+        </div>
+
+        <div class="main-panel">
+            <div class="welcome">
+                <h3 class="greeting"></h3>
+            </div>
+
+            <div class="account-details">
+                <h3>ACCOUNT DETAILS</h3>
+                <div class="account-box">
+                    <div class="profile-box">
+                        <img src="./images/telsa_light.png" class="account-avatar" alt="manager avatar">
+                        <h4 id="manager-name-display">Mr. Telsa</h4>
+                        <p>Restaurant Manager</p>
+                    </div>
+
+                    <div class="account-info">
+                        <div class="info-row">
+                            <span>Full Name</span>
+                            <strong id="info-name">Mr. Telsa</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Role</span>
+                            <strong>Manager</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Restaurant</span>
+                            <strong>Telsa Restaurant</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Access Level</span>
+                            <strong>Full Control</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Shift</span>
+                            <strong>08:00 AM - 06:00 PM</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Contact</span>
+                            <strong>+256 7100 200 300</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="account-info-editing">
+                    <div class="logo-panel">
+                        <img src="./images/telsa_light.png" class="big-logo" alt="Telsa logo">
+                    </div>
+
+                    <form class="edit-form" id="manager-edit-form">
+                        <div class="edit-details">
+                            <label for="manager-name">Name</label>
+                            <input type="text" id="manager-name" value="Mr. Telsa">
+                        </div>
+
+                        <div class="edit-details">
+                            <label for="manager-email">Email</label>
+                            <input type="email" id="manager-email" value="mr.telsa@telsa.com">
+                        </div>
+
+                        <div class="edit-details">
+                            <label for="manager-passward">Password</label>
+                            <input type="password" id="manager-passward" value="Telsa123">
+                        </div>
+
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="staff-attendance">
+                <h3>STAFF ATTENDANCE</h3>
+                <div class="staff_headings">
+                    <h3>NAME</h3>
+                    <h3>ROLE</h3>
+                    <h3>SHIFT</h3>
+                    <h3>STATUS</h3>
+                    <h3>LOGGED IN</h3>
+                </div>
+                <div class="attendance-list"></div>
+            </div>
+
+            <div class="order-history">
+                <h3>ORDER HISTORY</h3>
+                <div class="headers">
+                    <h3>ORDER NO.</h3>
+                    <h3>ORDERS</h3>
+                    <h3>TABLE NO.</h3>
+                    <h3>STATUS</h3>
+                    <h3>Payment Method</h3>
+                </div>
+                <div class="history-list">
+                </div>
+
+                <div class="total-money">
+                    <p class="money" id="gross-sales">Gross Sales: 0</p>
+                    <p class="money" id="return">Returned Cash: 0</p>
+                    <p class="money" id="net">Net Sales: 0</p>
+                </div>
+            </div>
+
+            <div class="orders-returned">
+                <h3>RETURNED ORDERS</h3>
+                <div class="headers">
+                    <h3>ORDER NO.</h3>
+                    <h3>ORDERS</h3>
+                    <h3>TABLE NO.</h3>
+                    <h3>STATUS</h3>
+                    <h3>Payment Method</h3>
+                </div>
+                <div class="history-list">
+                </div>
+
+                <div class="total-money">
+                    <p class="money" id="total-returned-cash">Total Cash Returned: 0</p>
+                </div>
+            </div>
+
+            <div class="orders-confirmed">
+                <h3>CONFIRMED ORDERS</h3>
+                <div class="headers">
+                    <h3>ORDER NO.</h3>
+                    <h3>ORDERS</h3>
+                    <h3>TABLE NO.</h3>
+                    <h3>STATUS</h3>
+                    <h3>Payment Method</h3>
+                </div>
+                <div class="history-list">
+                </div>
+
+                <div class="total-money">
+                    <p class="money" id="total-sales">Total Sales: 0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="manager.js"></script>
+</body>
+</html>

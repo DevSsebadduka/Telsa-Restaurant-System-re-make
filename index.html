@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+  
+
+
+        <!-- winbox library test 1 2 -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/winbox@0.2.82/dist/css/winbox.min.css">
+        <title>Telsa Restaurant</title>
+        <link rel="icon" type="image/png" href="./images/telsa_dark.png">
+    </head>
+
+    <body>
+        <div class="content">
+            <div class="title">
+                <h2>Telsa Restaurant</h2>
+            </div>
+            <h3 class="main-meal">Main Meals</h3>
+            <div class="Starters"></div>
+            <div class="Soups"></div>
+            <div class="Drinks"></div>
+            <div class="Platters"></div>
+            <div class="Desserts"></div>
+
+            <div class="returned-orders">
+                <h3>Return an Order</h3>
+                <input type="text" class="return-box" aria-label="Returned orders" placeholder="Enter table no.">
+                <button class="return-button" type="button">Return</button>
+            </div>
+
+            <div class="order_sec">
+                <h3>Order Summary</h3>
+                <h4>Item</h4>
+                <h4> Price (shs.)</h4>
+                <h4>Qty</h4>
+
+                <div class="total">
+                    <p>Total:</p>
+                    <p class="grand-total">0</p>
+                </div>
+
+            </div>
+
+            <div class="payserv_sec">
+                <h3>Payment Services</h3>
+                <div class="pay_btn">
+                    <div class="money">
+                        <button  class="pay1"  id="mtn"> Mtn </button>
+                        <button  class="pay1"  id="airtel"> Airtel </button>
+                        <button  class="pay1" id="master"> Mastercard </button>
+
+                        <div class="Mastercard">
+                            <h3>Enter card details</h3>
+                            <div class="card-details">
+                               <label for="card-no">Card Number : </label>
+                                <input type="text" id="card-no" maxlength="16">
+
+                                <label for="date">Expiry Date : </label>
+                                <input type="date" id="date">
+                                                            
+                                <label for="cvc">CVC : </label>
+                                <input type="text" id="cvc" maxlength="3">
+                            </div>
+                            <button class="submit">submit</button>
+
+                            <p  class="processing">Processing transaction.....</p>
+                            <p  class="success">Payment successful, Your order has been placed</p>
+                        </div>
+
+
+                        <button  class="pay1" id="bank"> Bank </button>
+                        <button  class="pay1"  id="cash"> Cash </button>
+
+                        <div class="Cash">
+                            <h3>Balance Calculator</h3>
+                            <div class="cash-details">
+                               <label for="cash-no">Received : </label>
+                                <input type="text" id="cash-no" maxlength="8">
+
+                                <label for="balance">Balance : </label>
+                                <p id="balance"> 0 </p>
+                            </div>
+                            <button class="balance">submit</button>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <h3>Service Type</h3>
+                    <div class="service">
+                        <button class="pay1" id="dine"> Dine in </button>
+                        <button class="pay1" id="away"> Take away </button>
+                    </div>
+
+                    <button id="clear" class="pay1"> Clear Order </button>
+                    <button class="pay1" id="total">  Confirm Order</button>
+
+                    <h4>Have a coupon?</h4>
+                    <input type="text" class="pay1" id="box">
+                    <button id="apply" class="pay1"> Apply </button>
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/winbox@0.2.82/dist/winbox.bundle.min.js"></script>
+        <script src="index.js"></script>
+    </body>
+</html>
+
+
+<!-----------------FUTURE FEATURES----------------->
+<!--------
+1. Orders returned
+2. Order history in manager's dashboard - done
+3. Manager's dashboard with analytics
+4. login system for staff and managers
+5. Staff dashboard with analytics
+6. Staff dashboard with order history
+7. Manager's inventory management system
+8. Quick manager contact with staff
+9. Quick meal search option
+-->
+
+<!----------
+for now using new BroadcastChannel for live updates but later
+use websockets with backend for live saved data updates.
+-->

@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: linear-gradient(#718b69, white, #acc8a2);
+    height: 100vh;
+}  
+
+.content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100vh;
+    padding: 0 1rem;
+}
+
+.header {
+    display: flex;
+    height: clamp(300px, 4vh, 500px);
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 1rem;
+}
+
+.top h2 {
+    font-size: clamp(1.5rem, 2.5vw, 3rem);
+    color: #912f56;
+    font-family: Apotos;
+    text-shadow: 2px 2px 5px white;
+    margin-bottom: 1rem;
+}
+
+.goal {
+    color: #912f56;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(1rem, 1.7vw, 2rem);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.welcome {
+    color: rgb(94, 93, 93);
+    font-size: clamp(1rem, 1.2vw, 1.25rem);
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.login-box {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    width: clamp(450px, 3.5vw, 650px);
+    justify-content: space-around;
+    height: clamp(400px, 500px, 600px); 
+    background: linear-gradient(#acc8a2, white, #718b69);
+    box-shadow: 0 3px 16px rgba(26, 37, 23, 0.16);
+}
+
+h1 {
+    color: #912f56;
+    font-size: clamp(1.1rem, 1.7vw, 1.75rem);
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+input.login {
+    width: 50%;
+    text-align: center;
+    margin: 0 auto;
+    font-size: clamp(0.85rem, 1.1vw, 1.1rem);
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.Email {
+    border-bottom: 1px solid #1a2517;
+}
+
+.Email input {
+    background-color: transparent;
+    width: 300px;
+    color: black;
+    outline: none;
+    border: none;
+}
+
+.Passward {
+    border-bottom: 1px solid #1a2517;
+}
+
+.Passward input {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    width: 300px;
+    color: black;
+}
+
+
