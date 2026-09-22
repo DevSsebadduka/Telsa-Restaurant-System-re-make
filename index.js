@@ -1,8 +1,12 @@
 let Total = 0;
 let discount = 0;
 let activeMenu = null;
+let staff_list = JSON.parse(localStorage.getItem("staff_details")) || [];
 
 const transfer_data = new BroadcastChannel('live-updates');
+
+const welcome_user = document.querySelector(".user");
+const sign_out = document.querySelector(".user-out");
 
 const container = document.createElement("div");
 container.setAttribute("class", "container");
@@ -101,6 +105,29 @@ function confirmCurrentOrder() {
     orders = [];
     localStorage.removeItem('myorder');
 }
+
+//welcome user after login and sign out
+document.addEventListener("DOMContentLoaded", () => {
+    const get_data = localStorage.getItem('staff_details');
+    staff_list = JSON.parse(get_data);
+
+    if (get_data) {
+        welcome_user.textContent = `Welcome ${staff_list[0].staff}`;
+    }
+});
+
+sign_out.addEventListener("click", () => {
+    let answer = confirm("Do you wish to sign out?");
+
+    if (answer) {
+        window.location.href = "menu_login.html";
+    }
+    else {
+        return;
+    }
+    
+})
+
 
 
 //reset storage 
