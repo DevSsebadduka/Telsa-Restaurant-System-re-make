@@ -237,7 +237,7 @@ transfer_data.onmessage = (event) => {
         );
 
         if (returned_order) {
-            returned_order.status_value = "Returned";
+            returned_order.status_value = "Re-prepared";
             localStorage.setItem("confirmedOrders", JSON.stringify(confirmed_orders));
             add_to_orderList(confirmed_orders);
         }

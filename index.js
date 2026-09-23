@@ -22,7 +22,8 @@ let isServiceBtn_clicked = false;
 
 
 // return order logic
-
+const summary_page = document.querySelector(".order-summary");
+const summary_box = document.querySelector(".order-details");
 
 const return_box = document.querySelector(".return-box");
 const return_btn = document.querySelector(".return-button");
@@ -34,58 +35,151 @@ function getRecordByTableno(tableNumber) {
     return get_records.find(order => Number(order.table_number) === Number(tableNumber)) || null;
 }
 
+function getRecordByFoodDetail(foodItems) {
+    return get_records.find(record => {
+        const order_items = record.items.map(item => item.Starter.toLowerCase());
+        return foodItems.every(food => order_items.includes(food));
+    }) || null;
+}
+
 return_btn.addEventListener("click", () => {
     const typed_value = return_box.value.trim();
     const typed_no = Number(typed_value);
     const record_no = getRecordByTableno(typed_no);
-    
+
     if (record_no) {
-        let answwer = confirm("Do you wish to return order?");
+        summary_box.innerHTML = "";
 
-        if (answwer) {
-            let reply = confirm("You wish for the order to be re-prepared or cash back");
-            if (reply) {
-                alert(`Order for table ${typed_no} has been returned sucessfully. Please wait...`);
+        const order_details = document.createElement("div");
+        order_details.className = "detailed-orders";
+        order_details.innerHTML = `
+            <p>${record_no.orderNumber}</p>
+            <div>${record_no.items.map(item =>
+                `<p>${item.Starter} shs. ${item.prices} Qty ${item.qty}</p>`
+            ).join("")}<p>Total: shs. ${record_no.total}</p></div>
+            <p>${record_no.table_number}</p>
+            <p>${record_no.payment}</p>
+        `;
+        summary_box.appendChild(order_details);
+
+        const choose_buttons = document.querySelector(".choose-one");
+        const write_return = document.querySelector(".write-return");
+        const food_name = document.querySelector(".food-name");
+        const food_input = document.querySelector("#food-name");
+        const return_food = document.querySelector("#return-food");
+        const return_all = document.querySelector("#return-all");
+
+        choose_buttons.style.display = "flex";
+        write_return.style.display = "none";
+        return_food.style.display = "none";
+        return_all.style.display = "none";
+
+        document.querySelector(".remake").onclick = () => {
+            choose_buttons.style.display = "none";
+            write_return.style.display = "block";
+            return_food.style.display = "block";
+            return_all.style.display = "block";
+            food_name.textContent = "Item/s to be remade: ";
+
+            return_food.onclick = () => {
+                const foods = food_input.value.toLowerCase().split(/[ ,]+/);
+                if (getRecordByFoodDetail(foods)) {
+                    alert(`Items ${foods.join(' ,')} have been returned for re-preparation.`);
+                    record_no.status_value = "Re-prepared";
+                    localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+
+                    transfer_data.postMessage({
+                        type: "order-returned",
+                        table_number: record_no.table_number
+                    });
+                    location.reload();
+                } else {
+                    alert("Items do not match this order.");
+                }
+            };
+
+            return_all.onclick = () => {
+                alert("All food items have been returned for re-preparation.");
+                record_no.status_value = "Re-prepared";
+                localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+
                 transfer_data.postMessage({
-                    type: 'order-returned',
+                    type: "order-returned",
                     table_number: record_no.table_number
                 });
-                return_box.value = "";
-            }
-            else {
-                alert(`Cash returned: shs. ${record_no.total}`);
+                location.reload();
+            };
+        };
+
+        document.querySelector(".refund").onclick = () => {
+            choose_buttons.style.display = "none";
+            write_return.style.display = "block";
+            return_food.style.display = "block";
+            return_all.style.display = "block";
+            food_name.textContent = "Item/s to be refunded: ";
+            return_all.textContent = "Refund all";
+
+            return_food.onclick = () => {
+                const foods = food_input.value.toLowerCase().split(/[ ,]+/);
+                if (getRecordByFoodDetail(foods)) {
+                    alert(`Items ${foods.join(' ,')} have been refunded.`);
+                    location.reload();
+
+                    record_no.status_value = "Cash Returned";
+                    localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+
+                    transfer_data.postMessage({
+                        type: "cash-returned",
+                        table_number: record_no.table_number
+                    });
+                } else {
+                    alert("Items do not match this order.");
+                }
+            };
+
+            return_all.onclick = () => {
+                alert("All food items have been refunded.");
+                record_no.status_value = "Cash Returned";
+                localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+
                 transfer_data.postMessage({
-                    type: 'cash-returned',
+                    type: "cash-returned",
                     table_number: record_no.table_number
                 });
-                return_box.value = "";
+                location.reload();
+
+            };
+        };
+
+        new window.WinBox({
+            title: "Table Order Details",
+            width: "620px",
+            height: "480px",
+            x: "center",
+            y: "center",
+            modal: true,
+            mount: summary_page,
+            class: "summary-box",
+            onclose: () => {
+                summary_box.innerHTML = "";
             }
-        }
+        });
 
-        else {
-            alert('Order return cancelled');
-        }
-    }
-
-    else if (typed_value === "") {
-        alert('Please enter a table number')
-        return_box.focus();
+        return_box.value = "";
         return;
     }
 
-    else if (Number.isNaN(typed_no)) {
-        alert('Please enter a valid table number! Table number must be numerical');
+    if (typed_value === "") {
+        alert("Please enter a table number");
         return_box.focus();
-        return;
-    }
-
-    else {
-        alert('The entered table number doesnt match our records');
+    } else if (Number.isNaN(typed_no)) {
+        alert("Please enter a valid table number");
         return_box.focus();
-        return;
+    } else {
+        alert("The entered table number does not match our records");
+        return_box.focus();
     }
-
-})
+});
 
 function confirmCurrentOrder() {
     const confirmed_orders = JSON.parse(localStorage.getItem('confirmedOrders') || '[]');
@@ -105,6 +199,9 @@ function confirmCurrentOrder() {
     orders = [];
     localStorage.removeItem('myorder');
 }
+
+
+
 
 //welcome user after login and sign out
 document.addEventListener("DOMContentLoaded", () => {
@@ -145,13 +242,14 @@ sign_out.addEventListener("click", () => {
 
 //                                  Starters menu
 const food_items = {
-    Matooke: 2000,
-    Rice: 3000,
-    Pasta: 6000,
-    Posho: 4000,
-    Yams: 1000,
-    Pumpkin: 1000,
-    Cassava: 2000
+    "Matooke": 2000,
+    "Rice": 3000,
+    "Pasta": 6000,
+    "Posho": 4000,
+    "Yams": 1000,
+    "Pumpkin": 1000,
+    "Cassava": 2000,
+    
 }
 const starter_sec = document.getElementsByClassName("Starters")[0];
 let heading1 = document.createElement("button");
@@ -258,31 +356,22 @@ const soups = {
     Nakati: 2000,
     Buga: 2000,
     SukamaWitch: 4000
-}
+};
 const soup_sec = document.getElementsByClassName("Soups")[0];
-let heading2 = document.createElement("button");
+const heading2 = document.createElement("button");
+heading2.textContent = "Soups";
+heading2.className = "food-buttons";
 soup_sec.appendChild(heading2);
-const head_text2 = document.createTextNode("Soups");
-heading2.appendChild(head_text2);
-
-const heading2_atr = document.createAttribute("class");
-heading2_atr.value = "food-buttons";
-heading2.setAttributeNode(heading2_atr);
 
 const soup_mini = document.createElement("div");
-soup_mini.setAttribute("class", "food_mini_sec");
+soup_mini.className = "food_mini_sec";
 soup_sec.appendChild(soup_mini);
 
-
 for (const food in soups) {
-    let soup_btn = document.createElement("button");
+    const soup_btn = document.createElement("button");
+    soup_btn.textContent = food;
+    soup_btn.className = "starter";
     soup_mini.appendChild(soup_btn);
-    const soup_text = document.createTextNode(food);
-    soup_btn.appendChild(soup_text)
-
-    const item_atr = document.createAttribute("class");
-    item_atr.value = "starter";
-    soup_btn.setAttributeNode(item_atr);
 
     let count1 = 0;
     let price1 = 0;
@@ -349,7 +438,7 @@ for (const food in soups) {
 
         localStorage.setItem('myorder', JSON.stringify(orders));
         transfer_data.postMessage(orders);
-    }
+    };
 }
 
 
@@ -686,155 +775,43 @@ for (const dessert in desserts) {
 
 //                            MENU ANIMATIONS
 
-const menus = {
-    starters: {
-        button: heading1,
-        mini: starter_mini
-    },
-    soups: {
-        button: heading2,
-        mini: soup_mini
-    },
-    drinks: {
-        button: headings3,
-        mini: drink_mini
-    },
-    platters: {
-        button: headings4,
-        mini: platter_mini
-    },
-    desserts: {
-        button: headings5,
-        mini: dessert_mini
-    }
-};
+const menu_sections = document.querySelectorAll(".menu-section");
 
 function closeMenus() {
-    Object.values(menus).forEach(menu => {
-        menu.button.classList.remove("color-change");
-        menu.button.style.color = "";
-        menu.mini.classList.remove(
-            "show-starters",
-            "show-soups",
-            "show-drinks",
-            "show-platters",
-            "show-desserts"
-        );
+    menu_sections.forEach(section => {
+        const button = section.querySelector(".food-buttons");
+        const mini = section.querySelector(".food_mini_sec");
+
+        button.classList.remove("color-change");
+        button.style.color = "";
+        mini.classList.remove("show");
     });
-
-    starter_sec.classList.remove("up", "down", "close-to-soup-down");
-    soup_sec.classList.remove("up", "down");
-    drink_sec.classList.remove("up", "down");
-    platter_sec.classList.remove("up", "down");
-    dessert_sec.classList.remove("up", "down");
-
-    starter_sec.style.transform = "";
-    drink_sec.style.transform = "";
-    platter_sec.style.transform = "";
-    soup_sec.style.transform = "";
-    dessert_sec.style.transform = "";
-
-    starter_sec.classList.add("default");
-    soup_sec.classList.add("default");
-    drink_sec.classList.add("default");
-    platter_sec.classList.add("default");
-    dessert_sec.classList.add("default");
 
     activeMenu = null;
 }
 
-function openMenu(menuName) {
-    closeMenus();
+menu_sections.forEach(section => {
+    const button = section.querySelector(".food-buttons");
+    const mini = section.querySelector(".food_mini_sec");
 
-    activeMenu = menuName;
+    button.onclick = function(event) {
+        event.stopPropagation();
+        closeMenus();
 
-    const menu = menus[menuName];
-    menu.button.classList.add("color-change");
-    menu.button.style.color = "red";
-
-    starter_sec.classList.remove("default");
-    soup_sec.classList.remove("default");
-    drink_sec.classList.remove("default");
-    platter_sec.classList.remove("default");
-    dessert_sec.classList.remove("default");
-
-    if (menuName === "starters") {
-        starter_sec.classList.add("up");
-        soup_sec.classList.add("down");
-        starter_mini.classList.add("show-starters");
-        platter_sec.style.transform = "translateY(-1.5rem)";
-        drink_sec.style.transform = "translateY(7rem)";
-        dessert_sec.style.transform = "translateY(-10rem)";
-    }
-
-    if (menuName === "soups") {
-        starter_sec.classList.add("close-to-soup-down");
-        soup_sec.classList.add("up");
-        drink_sec.classList.add("down");
-        soup_mini.classList.add("show-soups");
-        platter_sec.classList.add("down");
-        dessert_sec.style.transform = "translateY(0rem)";
-    }
-
-    if (menuName === "drinks") {
-        starter_sec.style.transform = "translateY(10rem)";
-        soup_sec.style.transform = "translateY(2rem)";
-        drink_mini.classList.add("show-drinks");
-        platter_sec.style.transform = "translateY(8rem)";
-        dessert_sec.classList.add("down");
-
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                drink_sec.classList.add("up");
-            });
-        });
-    }
-
-    if (menuName === "platters") {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                platter_sec.classList.add("up");
-            });
-        });
-        soup_sec.style.transform = "translateY(-1rem)";
-        drink_sec.style.transform = "translateY(-10rem)";
-        starter_sec.style.transform = "translateY(8rem)";
-        dessert_sec.style.transform = "translateY(-1rem)";
-        platter_mini.classList.add("show-platters");
-        dessert_sec.classList.add("down");
-    }
-
-    if (menuName === "desserts") {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                dessert_sec.classList.add("up");
-            });
-        });
-        dessert_mini.classList.add("show-desserts");
-        dessert_sec.classList.add('up');
-        soup_sec.style.transform = "translateY(0rem)";
-        drink_sec.style.transform = "translateY(-8rem)";
-        starter_sec.style.transform = "translateY(8rem)";
-        platter_sec.style.transform = "translateY(-16rem)";
-        
-    }
-}
-
-heading1.onclick = () => openMenu("starters");
-heading2.onclick = () => openMenu("soups");
-headings3.onclick = () => openMenu("drinks");
-headings4.onclick = () => openMenu("platters");
-headings5.onclick = () => openMenu("desserts");
+        button.classList.add("color-change");
+        button.style.color = "red";
+        mini.classList.add("show");
+        activeMenu = section;
+    };
+});
 
 document.addEventListener("click", event => {
-    if (!activeMenu) return;
-
-    const menu = menus[activeMenu];
-
-    if (!menu.button.contains(event.target) && !menu.mini.contains(event.target)) {
+    if (activeMenu && !activeMenu.contains(event.target)) {
         closeMenus();
     }
 });
+
+// PAYSERV SECTIONNNNNNNNN //////
 
 
 
@@ -969,7 +946,6 @@ document.addEventListener("click", event => {
         cvc.classList.add("invalid");
     }
     else {
-
         new window.WinBox ({
             width: "300px",
             height: "150px",

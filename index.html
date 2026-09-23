@@ -18,17 +18,20 @@
                 <h2>Telsa Restaurant</h2>
                 <button class="user-out">SIGN OUT</button>
             </div>
-            <h3 class="main-meal">Main Meals</h3>
-            <div class="Starters"></div>
-            <div class="Soups"></div>
-            <div class="Drinks"></div>
-            <div class="Platters"></div>
-            <div class="Desserts"></div>
+            <div class="menu-column">
+                <h3 class="main-meal">Main Meals</h3>
+                <div class="menu-section Starters"></div>
+                <div class="menu-section Soups"></div>
+                <div class="menu-section Drinks"></div>
+                <div class="menu-section Platters"></div>
+                <div class="menu-section Desserts"></div>
 
-            <div class="returned-orders">
-                <h3>Return an Order</h3>
-                <input type="text" class="return-box" aria-label="Returned orders" placeholder="Enter table no.">
-                <button class="return-button" type="button">Return</button>
+
+                <div class="returned-orders">
+                    <h3>Return an Order</h3>
+                    <input type="text" class="return-box" aria-label="Returned orders" placeholder="Enter table no.">
+                    <button class="return-button" type="button">Return</button>
+                </div>
             </div>
 
             <div class="order_sec">
@@ -101,11 +104,31 @@
                     <h4>Have a coupon?</h4>
                     <input type="text" class="pay1" id="box">
                     <button id="apply" class="pay1"> Apply </button>
-
-
-
                 </div>
+            </div>
 
+            <div class="order-summary">
+                <div class="sum_headers">
+                    <h3>Order No.</h3>
+                    <h3>Order Details</h3>
+                    <h3>Table No.</h3>
+                    <h3>Payment Option</h3>
+                </div>
+                <div class="order-details"></div>
+
+                <div class="food_returned">
+                    <div class="choose-one">
+                        <button class="remake">REMAKE</button>
+                        <button class="refund">REFUND</button>
+                    </div>
+
+                    <div class="write-return">    
+                        <label for="food-name" class="food-name">Item/s to be returned: </label>
+                        <input type="text" id="food-name" placeholder="Enter food items">
+                    </div>
+                    <button id="return-food">submit</button>
+                    <button id="return-all">Return all</button>
+                </div>
             </div>
 
         </div>
@@ -118,15 +141,15 @@
 
 <!-----------------FUTURE FEATURES----------------->
 <!--------
-1. Orders returned
+1. Orders returned - done
 2. Order history in manager's dashboard - done
 3. Manager's dashboard with analytics
 4. login system for staff and managers
-5. Staff dashboard with analytics
-6. Staff dashboard with order history
+5. Staff dashboard with analytics - done
+6. Staff dashboard with order history - done
 7. Manager's inventory management system
-8. Quick manager contact with staff
-9. Quick meal search option
+8. Quick manager contact with staff - done
+9. Quick meal search option 
 -->
 
 <!----------
