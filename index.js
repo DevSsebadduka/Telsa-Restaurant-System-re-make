@@ -2,6 +2,7 @@ let Total = 0;
 let discount = 0;
 let activeMenu = null;
 let staff_list = JSON.parse(localStorage.getItem("staff_details")) || [];
+let logged_in_staff = null;
 
 const transfer_data = new BroadcastChannel('live-updates');
 
@@ -207,9 +208,12 @@ function confirmCurrentOrder() {
 document.addEventListener("DOMContentLoaded", () => {
     const get_data = localStorage.getItem('staff_details');
     staff_list = JSON.parse(get_data);
+    logged_in_staff = staff_list.find(
+        person => person.staff === localStorage.getItem("current_staff")
+    );
 
-    if (get_data) {
-        welcome_user.textContent = `Welcome ${staff_list[0].staff}`;
+    if (logged_in_staff) {
+        welcome_user.textContent = `Welcome ${logged_in_staff.staff}`;
     }
 });
 
@@ -218,12 +222,28 @@ sign_out.addEventListener("click", () => {
 
     if (answer) {
         window.location.href = "menu_login.html";
+
+        if (!logged_in_staff) return;
+
+        logged_in_staff.Status = "Logged Out";
+        logged_in_staff.time_out = new Date().toLocaleTimeString();
+        localStorage.setItem("staff_details", JSON.stringify(staff_list));
+        transfer_data.postMessage({
+            type: "Sign-out",
+            data: {
+                staff: logged_in_staff.staff,
+                Status: logged_in_staff.Status,
+                time_out: logged_in_staff.time_out
+            }
+        });
+        localStorage.removeItem("current_staff");
     }
+
     else {
         return;
-    }
-    
+    }    
 })
+
 
 
 
@@ -251,6 +271,7 @@ const food_items = {
     "Cassava": 2000,
     
 }
+
 const starter_sec = document.getElementsByClassName("Starters")[0];
 let heading1 = document.createElement("button");
 starter_sec.appendChild(heading1);

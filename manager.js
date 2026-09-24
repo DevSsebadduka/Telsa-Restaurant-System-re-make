@@ -38,6 +38,7 @@ const confirmed_history_list = accepted_page.querySelector(".history-list");
 let confirmed_orders = JSON.parse(localStorage.getItem("confirmedOrders") || "[]");
 let staff_list = JSON.parse(localStorage.getItem("staff_details")) || [];
 
+
 function showSection(sectionToShow) {
     welcome_page.style.visibility = sectionToShow === "welcome" ? "visible" : "hidden";
     account_page.style.display = sectionToShow === "account" ? "block" : "none";
@@ -87,7 +88,8 @@ accepted_btn.addEventListener("click", () => {
 })
 
 function showAttendanceData(list) {
-    attendance_list.innerHTML = "";
+    attendance_list.querySelectorAll(":scope > .attendance-row").forEach(staff_row => staff_row.remove());
+    // attendance_list.innerHTML = "";
 
     list.forEach(person => {
         const staff_row = document.createElement("div");
@@ -106,10 +108,20 @@ function showAttendanceData(list) {
         staff_status.textContent = person.Status;
         staff_status.className = "staff-status-color";
 
+        if (person.Status === "Logged Out") {
+            staff_status.style.color = "red";
+        }
+        else {
+            staff_status.style.color = "rgb(0, 26, 255)";
+        }
+
         const staff_logIn = document.createElement("p");
         staff_logIn.textContent = person.time;
 
-        staff_row.append(staff_name, staff_role, staff_shift, staff_status, staff_logIn);
+        const staff_logOut = document.createElement("p");
+        staff_logOut.textContent = person.time_out;        
+
+        staff_row.append(staff_name, staff_role, staff_shift, staff_status, staff_logIn, staff_logOut);
         attendance_list.appendChild(staff_row);
     });
 }
@@ -240,6 +252,21 @@ transfer_data.onmessage = (event) => {
             returned_order.status_value = "Re-prepared";
             localStorage.setItem("confirmedOrders", JSON.stringify(confirmed_orders));
             add_to_orderList(confirmed_orders);
+        }
+
+        return;
+    }
+
+    if (messageType === 'Sign-out') {
+        const update_status = staff_list.find(
+            staff => staff.staff === event.data.data.staff
+        );
+
+        if (update_status) {
+            update_status.Status = event.data.data.Status;
+            update_status.time_out = event.data.data.time_out;
+            localStorage.setItem("staff_details", JSON.stringify(staff_list));
+            showAttendanceData(staff_list);
         }
 
         return;

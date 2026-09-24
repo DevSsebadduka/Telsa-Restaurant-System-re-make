@@ -102,11 +102,7 @@ body {
 }
 
 /*-------------------------------------food section-----------------*/
-.Starters,
-.Soups,
-.Drinks,
-.Platters,
-.Desserts {
+.menu-section {
     grid-column: auto;
     grid-row: auto;
     height: fit-content;
@@ -145,26 +141,27 @@ body {
 }
 
 .food_mini_sec {
-    height: 0;
+    height: auto;
     visibility: hidden;
     overflow: hidden;
 }
 
 .menu-section .food_mini_sec {
     opacity: 0;
-    transform: translateY(6rem);
+    transform: translateY(2rem);
     margin-top: 5px;
-    max-height: 310px;
-    overflow-y: auto;
+    max-height: 0;
+    overflow: hidden;
     scrollbar-width:thin;
+    transition: max-height 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
 }
 
 .menu-section .food_mini_sec.show {
-    height: fit-content;
+    max-height: 310px;
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
-    transition: opacity 0.5s ease, transform 0.5s ease, height 0.5s ease;
+    overflow-y: auto;
 }
 
 .returned-orders {

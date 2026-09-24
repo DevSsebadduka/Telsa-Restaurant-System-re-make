@@ -376,7 +376,7 @@ body {
 
 .staff_headings {
     display: grid;
-    grid-template-columns: minmax(7rem, 1fr) minmax(8rem, 1fr) minmax(8rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
+    grid-template-columns: minmax(7rem, 1fr) minmax(8rem, 1fr) minmax(8rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
     padding: 0.5rem 1rem;
     background: rgba(255, 255, 255, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -404,10 +404,9 @@ body {
 
 .attendance-row {
     display: grid;
-    grid-template-columns: minmax(7rem, 1fr) minmax(8rem, 1fr) minmax(8rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
+    grid-template-columns:  minmax(7rem, 1fr) minmax(8rem, 1fr) minmax(8rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
     align-items: center;
-    gap: 1rem;
-    padding: 0.9rem 0.5rem;
+    padding: 0.9rem 1rem;
     background: var(--surface);
     border: 1px solid var(--line);
     border-left: 0.35rem solid var(--berry);
@@ -418,11 +417,7 @@ body {
 
 .attendance-row p {
     color: var(--ink);
-    font-size: 0.9rem;
-}
-
-.staff-status-color {
-    color: rgb(0, 26, 255) !important;
+    font-size: clamp(0.5rem, 1.2vw, 2.8rem);
 }
 
 
