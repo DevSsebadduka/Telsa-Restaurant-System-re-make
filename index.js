@@ -213,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (logged_in_staff) {
+        sign_out.textContent = "SIGN OUT";
         welcome_user.textContent = `Welcome ${logged_in_staff.staff}`;
     }
 });
