@@ -22,7 +22,7 @@
                 <button class="btn1" id="history">Order History</button>
                 <button class="btn1" id="accepted">Confirmed Orders</button>
                 <button class="btn1" id="returned_btn">Returned Orders</button>
-                <button class="btn1">Stock Inventory</button>
+                <button class="btn1" id="inventory_btn">Stock Inventory</button>
                 <button class="btn1">Random Button</button>
             </div>
             
@@ -33,8 +33,108 @@
         </div>
 
         <div class="main-panel">
+            <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Collapse navigation" aria-expanded="true">
+                <span aria-hidden="true">‹</span>
+            </button>
             <div class="welcome">
-                <h3 class="greeting"></h3>
+                <div class="dashboard-content">
+                    <div class="welcome-manager">
+                        <div class="welcome-content">
+                            <p class="welcome-title">TELSA RESTAURANT · MANAGER DASHBOARD</p>
+                            <h3 class="greeting"></h3>
+                            <p class="welcome-message">Here’s your restaurant at a glance. Keep an eye on your team and order activity.</p>
+                            <div class="welcome-btns">
+                                <button class="dashboard-btns" id="dashboard-attendance" type="button">View staff attendance</button>
+                                <button class="dashboard-btns dashboard-btns-light" id="dashboard-orders" type="button">Browse order history</button>
+                            </div>
+                        </div>
+                        <div class="circle1" aria-hidden="true"></div>
+                        <div class="circle2" aria-hidden="true"></div>
+                        <div class="circle3" aria-hidden="true"></div>
+                        <div class="circle4" aria-hidden="true"></div>
+                        <div class="welcome-note"><span class="status-dot"></span>Your dashboard is ready</div>
+                    </div>
+
+                    <div class="dashboard-stats" aria-label="Restaurant overview">
+                        <div class="dashboard-stat">
+                            <span class="dashboard-stat-icon" aria-hidden="true">✦</span>
+                            <span class="dashboard-stat-label">Staff on duty</span>
+                            <strong class="dashboard-stat-value" id="dash-staff-count">0</strong>
+                            <span class="dashboard-stat-foot">Currently logged in</span>
+                        </div>
+                        <div class="dashboard-stat">
+                            <span class="dashboard-stat-icon" aria-hidden="true">⌑</span>
+                            <span class="dashboard-stat-label">Orders recorded</span>
+                            <strong class="dashboard-stat-value" id="dash-order-count">0</strong>
+                            <span class="dashboard-stat-foot">Across all order activity</span>
+                        </div>
+                        <div class="dashboard-stat">
+                            <span class="dashboard-stat-icon" aria-hidden="true">✓</span>
+                            <span class="dashboard-stat-label">Confirmed orders</span>
+                            <strong class="dashboard-stat-value" id="dash-confirmed-count">0</strong>
+                            <span class="dashboard-stat-foot">Ready and completed</span>
+                        </div>
+                        <div class="dashboard-stat dashboard-stat-accent">
+                            <span class="dashboard-stat-icon" aria-hidden="true">↗</span>
+                            <span class="dashboard-stat-label">Net sales</span>
+                            <strong class="dashboard-stat-value" id="dash-net-sales">Shs. 0</strong>
+                            <span class="dashboard-stat-foot">After cash returns</span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-lower">
+                        <div class="dashboard-panel recent-panel">
+                            <div class="dashboard-panel-heading">
+                                <div>
+                                    <p class="panel-detail">THE LATEST</p>
+                                    <h3>Recent orders</h3>
+                                </div>
+                                <button class="text-action" id="dashboard-see-orders" type="button">See all</button>
+                            </div>
+                            <div class="recent-orders" id="dash-recent-orders">
+                                <p class="empty-dashboard">No orders have been recorded yet.</p>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-panel team-panel">
+                            <div class="dashboard-panel-heading">
+                                <div>
+                                    <p class="panel-detail">TEAM CHECK-IN</p>
+                                    <h3>Staff overview</h3>
+                                </div>
+                                <span class="team-icon" aria-hidden="true">✦</span>
+                            </div>
+                            <div class="team-total">
+                                <strong id="dash-on-duty-count">0</strong>
+                                <span>team members on duty</span>
+                            </div>
+                            <div class="team-progress">
+                                <span id="dash-staff-progress"></span>
+                            </div>
+                            <div class="team-legend">
+                                <span><i class="legend-dot legend-on"></i>Logged in <strong id="dash-on-duty-label">0</strong></span>
+                                <span><i class="legend-dot legend-off"></i>Off duty <strong id="dash-off-duty-count">0</strong></span>
+                            </div>
+                            <button class="team-action" id="dashboard-see-staff" type="button">Open staff attendance <span aria-hidden="true">→</span></button>
+                        </div>
+
+                        <div class="dashboard-panel stock-panel">
+                            <div class="dashboard-panel-heading">
+                                <div>
+                                    <p class="panel-detail">STOCK CHECK</p>
+                                    <h3>Inventory watch</h3>
+                                </div>
+                                <span class="team-icon" aria-hidden="true">▤</span>
+                            </div>
+                            <div class="team-total">
+                                <strong id="dash-low-stock-count">0</strong>
+                                <span>items low or out of stock</span>
+                            </div>
+                            <p class="stock-summary">Track menu item quantities and keep your team ready for service.</p>
+                            <button class="team-action" id="dashboard-see-inventory" type="button">Manage inventory <span aria-hidden="true">→</span></button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="account-details">
@@ -165,9 +265,42 @@
                     <p class="money" id="total-sales">Total Sales: 0</p>
                 </div>
             </div>
+
+            <div class="stock-inventory">
+                <div class="stock-page-heading">
+                    <div>
+                        <p class="panel-detail">MENU ITEM TRACKING</p>
+                        <h3>STOCK INVENTORY</h3>
+                        <p>Set each item’s on-hand quantity. Confirmed orders automatically deduct the quantities ordered.</p>
+                    </div>
+                    <button class="stock-page-action" id="stock-add-link" type="button">Add stock to menu</button>
+                </div>
+                <div class="stock-summary-cards">
+                    <div class="stock-summary-card">
+                        <span>Menu items tracked</span>
+                        <strong id="stock-item-count">0</strong>
+                    </div>
+                    <div class="stock-summary-card">
+                        <span>Total units on hand</span>
+                        <strong id="stock-unit-count">0</strong>
+                    </div>
+                    <div class="stock-summary-card stock-summary-alert">
+                        <span>Low / out of stock</span>
+                        <strong id="stock-low-count">0</strong>
+                    </div>
+                </div>
+                <p class="stock-guidance">Stock is tracked per menu item, not by recipe ingredients. Items at zero cannot be added to an order.</p>
+                <div class="stock-table-wrap">
+                    <div class="stock-table stock-table-head" aria-hidden="true">
+                        <span>Category</span><span>Menu item</span><span>Price</span><span>On hand</span><span>Update stock</span>
+                    </div>
+                    <div class="stock-list" id="stock-list"></div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script src="menu-data.js"></script>
     <script src="manager.js"></script>
 </body>
 </html>

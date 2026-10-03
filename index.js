@@ -20,6 +20,41 @@ const random_table = table_no[Math.floor(Math.random() * table_no.length)];
 let orders = JSON.parse(localStorage.getItem('myorder') || '[]');
 let my_clicked_btn = "";
 let isServiceBtn_clicked = false;
+const inventory_key = "restaurantInventory";
+
+function getInventory() {
+    return JSON.parse(localStorage.getItem(inventory_key) || "{}");
+}
+
+function getMenuStock(itemName) {
+    const inventory = getInventory();
+    return Number.isInteger(inventory[itemName]) && inventory[itemName] >= 0
+        ? inventory[itemName]
+        : 0;
+}
+
+function canAddMenuItem(itemName, requestedQuantity) {
+    if (getMenuStock(itemName) >= requestedQuantity) return true;
+
+    alert(`${itemName} is out of stock or there is not enough stock for this quantity.`);
+    return false;
+}
+
+function refreshMenuStockButtons() {
+    document.querySelectorAll(".food_mini_sec .starter").forEach(button => {
+        const available = getMenuStock(button.textContent);
+        button.disabled = available === 0;
+        button.title = available === 0 ? "Out of stock" : `${available} in stock`;
+    });
+}
+
+transfer_data.addEventListener("message", event => {
+    if (event.data?.type === "inventory-updated") refreshMenuStockButtons();
+});
+
+window.addEventListener("storage", event => {
+    if (event.key === inventory_key) refreshMenuStockButtons();
+});
 
 
 // return order logic
@@ -183,6 +218,24 @@ return_btn.addEventListener("click", () => {
 });
 
 function confirmCurrentOrder() {
+    const inventory = getInventory();
+    const unavailable_item = orders.find(order => {
+        const quantity = Number(order.qty);
+        return !Number.isInteger(quantity) || quantity < 1 || (inventory[order.Starter] ?? 0) < quantity;
+    });
+
+    document.querySelectorAll(".food_mini_sec .starter").forEach(button => {
+        if (unavailable_item && button.textContent === unavailable_item.Starter) {
+            button.disabled = true;
+            button.title = "Not enough stock for this order";
+        }
+    });
+
+    // if (unavailable_item) {
+    //     alert(`There is not enough ${unavailable_item.Starter} in stock to complete this order. Please update your order.`);
+    //     return false;
+    // }
+
     const confirmed_orders = JSON.parse(localStorage.getItem('confirmedOrders') || '[]');
     const confirmed_order = {
         table_number: random_table,
@@ -193,12 +246,19 @@ function confirmCurrentOrder() {
         payment: my_clicked_btn
     };
 
+    orders.forEach(order => {
+        inventory[order.Starter] -= Number(order.qty);
+    });
+    localStorage.setItem(inventory_key, JSON.stringify(inventory));
+    transfer_data.postMessage({ type: "inventory-updated", data: inventory });
+    refreshMenuStockButtons();
     confirmed_orders.push(confirmed_order);
     localStorage.setItem('confirmedOrders', JSON.stringify(confirmed_orders));
     transfer_data.postMessage({ type: 'confirmed-order', order: confirmed_order });
 
     orders = [];
     localStorage.removeItem('myorder');
+    return true;
 }
 
 
@@ -207,7 +267,7 @@ function confirmCurrentOrder() {
 //welcome user after login and sign out
 document.addEventListener("DOMContentLoaded", () => {
     const get_data = localStorage.getItem('staff_details');
-    staff_list = JSON.parse(get_data);
+    staff_list = JSON.parse(get_data || "[]");
     logged_in_staff = staff_list.find(
         person => person.staff === localStorage.getItem("current_staff")
     );
@@ -262,16 +322,7 @@ sign_out.addEventListener("click", () => {
 
 
 //                                  Starters menu
-const food_items = {
-    "Matooke": 2000,
-    "Rice": 3000,
-    "Pasta": 6000,
-    "Posho": 4000,
-    "Yams": 1000,
-    "Pumpkin": 1000,
-    "Cassava": 2000,
-    
-}
+const food_items = restaurantMenu.Starters;
 
 const starter_sec = document.getElementsByClassName("Starters")[0];
 let heading1 = document.createElement("button");
@@ -308,6 +359,7 @@ for (const food in food_items) {
 
 
     food_btn.onclick = function() {
+        if (!canAddMenuItem(food, count2 + 1)) return;
         count2 = count2 + 1;
         Total += food_items[food_btn.textContent];
         price2 = food_items[food_btn.textContent] * count2;
@@ -370,15 +422,7 @@ for (const food in food_items) {
 
 
 //                                    Soups meun
-const soups = {
-    Meat: 4000,
-    Liver: 5000,
-    Beans: 3000,
-    Fish: 5000,
-    Nakati: 2000,
-    Buga: 2000,
-    SukamaWitch: 4000
-};
+const soups = restaurantMenu.Soups;
 const soup_sec = document.getElementsByClassName("Soups")[0];
 const heading2 = document.createElement("button");
 heading2.textContent = "Soups";
@@ -402,6 +446,7 @@ for (const food in soups) {
     let qty_paragraph1;
 
     soup_btn.onclick = function() {
+        if (!canAddMenuItem(food, count1 + 1)) return;
         count1 = count1 + 1;
         Total += soups[soup_btn.textContent];
         price1 = soups[soup_btn.textContent] * count1;
@@ -466,29 +511,7 @@ for (const food in soups) {
 
 
 //                                     Drinks Menu
-const drinks = {
-    "CocaCola": 1000,
-    "Fanta": 1000,
-    "Passion Juice": 1500,
-    "Apple Juice": 2000,
-    "Mango Juice": 1000,
-    "Pepsi": 1000,
-    "Sprite": 1000,
-    "CocaCola1": 1000,
-    "Fanta2": 1000,
-    "Passion Juice3": 1500,
-    "Apple Juice4": 2000,
-    "Mango Juice5": 1000,
-    "Pepsi6": 1000,
-    "Sprite7": 1000,
-    "CocaCola8": 1000,
-    "Fanta9": 1000,
-    "Passion Juice10": 1500,
-    "Apple Juice11": 2000,
-    "Mango Juice12": 1000,
-    "Pepsi13": 1000,
-    "Sprite14": 1000
-}
+const drinks = restaurantMenu.Drinks;
 
 const drink_sec = document.getElementsByClassName("Drinks")[0];
 let headings3 = document.createElement("button");
@@ -522,6 +545,7 @@ for (const drink in drinks) {
     let qty_paragraph;
 
     drink_btn.onclick = function() {
+        if (!canAddMenuItem(drink, count + 1)) return;
         count = count + 1;
         Total += drinks[drink_btn.textContent];
         price = drinks[drink_btn.textContent] * count;
@@ -585,15 +609,7 @@ for (const drink in drinks) {
 
 //                                       Platters Menu 
 
-const platters = {
-    "GoatLeg Chips Chicken Pilao": 120000,
-    "Luwombo Matooke Pilao Beef": 90000,
-    "Chicken Pilao Matooke Posho": 55000,
-    "Rice Fish Matooke Greens": 30000,
-    "Matooke Rice Meat G.nuts": 28000,
-    "Matooke Chips Luwombo Beef": 25000,
-    "Pumpkin G.nuts Matooke Chicken": 15000
-}
+const platters = restaurantMenu.Platters;
 
 const platter_sec = document.getElementsByClassName("Platters")[0];
 let headings4 = document.createElement("button");
@@ -626,6 +642,7 @@ for (const platter in platters) {
     let qty_paragraph;
 
     platter_btn.onclick = () => {
+        if (!canAddMenuItem(platter, count + 1)) return;
         count = count + 1;
         Total += platters[platter_btn.textContent];
         price = platters[platter_btn.textContent] * count;
@@ -688,15 +705,7 @@ for (const platter in platters) {
 
 
 //                                  DESSERTS
-const desserts = {
-    "Cheesecake": 3000,
-    "Chocolate Cake": 5000,
-    "Creme Brulee": 6500,
-    "Ice cream Sundaes": 7000,
-    "Brownies": 3000,
-    "Fruit Pies": 2000,
-    "Molten Chocolate Lava Cake": 6000
-}
+const desserts = restaurantMenu.Desserts;
 
 const dessert_sec = document.getElementsByClassName("Desserts")[0];
 let headings5 = document.createElement("button");
@@ -730,6 +739,7 @@ for (const dessert in desserts) {
     let qty_paragraph;
 
     dessert_btn.onclick = function() {
+        if (!canAddMenuItem(dessert, count + 1)) return;
         count = count + 1;
         Total += desserts[dessert_btn.textContent];
         price = desserts[dessert_btn.textContent] * count;
@@ -797,12 +807,12 @@ for (const dessert in desserts) {
 
 //                            MENU ANIMATIONS
 
-const menu_sections = document.querySelectorAll(".menu-section");
+const menu_divs = document.querySelectorAll(".menu-div");
 
 function closeMenus() {
-    menu_sections.forEach(section => {
-        const button = section.querySelector(".food-buttons");
-        const mini = section.querySelector(".food_mini_sec");
+    menu_divs.forEach(div => {
+        const button = div.querySelector(".food-buttons");
+        const mini = div.querySelector(".food_mini_sec");
 
         button.classList.remove("color-change");
         button.style.color = "";
@@ -812,9 +822,9 @@ function closeMenus() {
     activeMenu = null;
 }
 
-menu_sections.forEach(section => {
-    const button = section.querySelector(".food-buttons");
-    const mini = section.querySelector(".food_mini_sec");
+menu_divs.forEach(div => {
+    const button = div.querySelector(".food-buttons");
+    const mini = div.querySelector(".food_mini_sec");
 
     button.onclick = function(event) {
         event.stopPropagation();
@@ -823,7 +833,7 @@ menu_sections.forEach(section => {
         button.classList.add("color-change");
         button.style.color = "red";
         mini.classList.add("show");
-        activeMenu = section;
+        activeMenu = div;
     };
 });
 
@@ -833,7 +843,7 @@ document.addEventListener("click", event => {
     }
 });
 
-// PAYSERV SECTIONNNNNNNNN //////
+// PAYSERV divNNNNNNNN //////
 
 
 
@@ -846,7 +856,7 @@ document.addEventListener("click", event => {
 
 
 
-// PAYSERV SECTIONNNNNNNNN //////
+// PAYSERV divNNNNNNNN //////
 const mtn = document.getElementById("mtn");
 const airtel = document.getElementById("airtel");
 const master = document.getElementById("master");
@@ -917,8 +927,7 @@ total.onclick = function() {
 
     else {
         if (confirm("Your bill is: " + Total)) {
-            confirmCurrentOrder();
-            location.reload();
+            if (confirmCurrentOrder()) location.reload();
         }
     }
 
@@ -926,8 +935,7 @@ total.onclick = function() {
 
 submit_cash.addEventListener("click", () => {
     if (confirm("Your bill is: " + Total + "\n" + "Balance: " + new_balance)) {
-        confirmCurrentOrder();
-        location.reload();
+        if (confirmCurrentOrder()) location.reload();
     }
 })
 
@@ -994,8 +1002,7 @@ document.addEventListener("click", event => {
 
         setTimeout (() => {
             if (confirm("Your bill is: " + Total)) {
-                confirmCurrentOrder();
-                location.reload();
+                if (confirmCurrentOrder()) location.reload();
             }
         }, 5000);
     }
@@ -1069,3 +1076,5 @@ service_btns.forEach(btn => {
         isServiceBtn_clicked = true;
     })
 });
+
+refreshMenuStockButtons();

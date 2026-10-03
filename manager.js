@@ -2,6 +2,7 @@ const transfer_data = new BroadcastChannel('live-updates');
 const account_btn = document.querySelector("#account_details");
 const attendance_btn = document.querySelector("#attendance");
 const history_btn = document.querySelector("#history");
+const inventory_btn = document.querySelector("#inventory_btn");
 const welcome_page = document.querySelector(".welcome");
 const greeting = document.querySelector(".greeting");
 
@@ -33,23 +34,189 @@ const returned_history_list = return_page.querySelector(".history-list");
 const accepted_btn = document.querySelector("#accepted");
 const accepted_page = document.querySelector(".orders-confirmed");
 const confirmed_history_list = accepted_page.querySelector(".history-list");
+const stock_page = document.querySelector(".stock-inventory");
+const stock_list = document.querySelector("#stock-list");
+const dashboard_staff_count = document.querySelector("#dash-staff-count");
+const dashboard_order_count = document.querySelector("#dash-order-count");
+const dashboard_confirmed_count = document.querySelector("#dash-confirmed-count");
+const dashboard_net_sales = document.querySelector("#dash-net-sales");
+const dashboard_on_duty_count = document.querySelector("#dash-on-duty-count");
+const dashboard_on_duty_label = document.querySelector("#dash-on-duty-label");
+const dashboard_off_duty_count = document.querySelector("#dash-off-duty-count");
+const dashboard_staff_progress = document.querySelector("#dash-staff-progress");
+const dashboard_recent_orders = document.querySelector("#dash-recent-orders");
+const sidebar_toggle = document.querySelector("#sidebar-toggle");
+const dashboard_content = document.querySelector(".content");
+const left_side_panel = document.querySelector(".left-side-panel");
+const dashboard_low_stock_count = document.querySelector("#dash-low-stock-count");
+const stock_item_count = document.querySelector("#stock-item-count");
+const stock_unit_count = document.querySelector("#stock-unit-count");
+const stock_low_count = document.querySelector("#stock-low-count");
 
 
 let confirmed_orders = JSON.parse(localStorage.getItem("confirmedOrders") || "[]");
 let staff_list = JSON.parse(localStorage.getItem("staff_details")) || [];
+const inventory_key = "restaurantInventory";
 
+function loadInventory() {
+    const saved_inventory = JSON.parse(localStorage.getItem(inventory_key) || "{}");
+    const current_inventory = {};
 
-function showSection(sectionToShow) {
-    welcome_page.style.visibility = sectionToShow === "welcome" ? "visible" : "hidden";
-    account_page.style.display = sectionToShow === "account" ? "block" : "none";
-    attendance_page.style.display = sectionToShow === "attendance" ? "block" : "none";
-    history_page.style.display = sectionToShow === "history" ? "block" : "none";
-    return_page.style.display = sectionToShow === "returned" ? "block" : "none";
-    accepted_page.style.display = sectionToShow === "confirmed" ? "block" : "none";
+    Object.values(restaurantMenu).forEach(category => {
+        Object.keys(category).forEach(itemName => {
+            const quantity = Number(saved_inventory[itemName]);
+            current_inventory[itemName] = Number.isSafeInteger(quantity) && quantity >= 0
+                ? quantity
+                : 0;
+        });
+    });
+
+    localStorage.setItem(inventory_key, JSON.stringify(current_inventory));
+    return current_inventory;
 }
 
+let inventory = loadInventory();
+
+function updateInventorySummary() {
+    const quantities = Object.values(inventory);
+    const low_stock_count = quantities.filter(quantity => quantity <= 5).length;
+
+    stock_item_count.textContent = quantities.length;
+    stock_unit_count.textContent = quantities.reduce((total, quantity) => total + quantity, 0).toLocaleString();
+    stock_low_count.textContent = low_stock_count;
+    dashboard_low_stock_count.textContent = low_stock_count;
+}
+
+function renderInventory() {
+    stock_list.replaceChildren();
+
+    Object.entries(restaurantMenu).forEach(([categoryName, items]) => {
+        Object.entries(items).forEach(([itemName, price]) => {
+            const row = document.createElement("div");
+            row.className = "stock-table stock-table-row";
+
+            const category = document.createElement("span");
+            category.className = "stock-category";
+            category.textContent = categoryName;
+
+            const name = document.createElement("strong");
+            name.className = "stock-item-name";
+            name.textContent = itemName;
+
+            const item_price = document.createElement("span");
+            item_price.textContent = `Shs. ${price.toLocaleString()}`;
+
+            const on_hand = document.createElement("span");
+            const quantity = inventory[itemName];
+            on_hand.className = quantity === 0 ? "stock-status stock-out" : quantity <= 5 ? "stock-status stock-low" : "stock-status stock-available";
+            on_hand.textContent = quantity === 0 ? "Out of stock" : quantity <= 5 ? `${quantity} · Low` : `${quantity} · In stock`;
+
+            const stock_control = document.createElement("div");
+            stock_control.className = "stock-control";
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.min = "0";
+            input.step = "1";
+            input.value = quantity;
+            input.setAttribute("aria-label", `On-hand quantity for ${itemName}`);
+
+            const save_button = document.createElement("button");
+            save_button.type = "button";
+            save_button.className = "stock-save";
+            save_button.dataset.item = itemName;
+            save_button.textContent = "Save";
+
+            stock_control.append(input, save_button);
+            row.append(category, name, item_price, on_hand, stock_control);
+            stock_list.appendChild(row);
+        });
+    });
+
+    updateInventorySummary();
+}
+
+function updateWelcomeDashboard() {
+    const on_duty = staff_list.filter(person => person.Status === "Logged In").length;
+    const confirmed_count = confirmed_orders.filter(order => order.status_value === "Confirmed").length;
+    const returned_sales = confirmed_orders
+        .filter(order => order.status_value === "Cash Returned")
+        .reduce((sum, order) => sum + getOrderTotal(order), 0);
+    const gross_sales = confirmed_orders.reduce((sum, order) => sum + getOrderTotal(order), 0);
+    const off_duty = staff_list.length - on_duty;
+
+    dashboard_staff_count.textContent = on_duty;
+    dashboard_order_count.textContent = confirmed_orders.length;
+    dashboard_confirmed_count.textContent = confirmed_count;
+    dashboard_net_sales.textContent = `Shs. ${(gross_sales - returned_sales).toLocaleString()}`;
+    dashboard_on_duty_count.textContent = on_duty;
+    dashboard_on_duty_label.textContent = on_duty;
+    dashboard_off_duty_count.textContent = off_duty;
+    dashboard_staff_progress.style.width = staff_list.length
+        ? `${(on_duty / staff_list.length) * 100}%`
+        : "0%";
+    dashboard_low_stock_count.textContent = Object.values(inventory)
+        .filter(quantity => quantity <= 5).length;
+
+    dashboard_recent_orders.replaceChildren();
+    const recent_orders = confirmed_orders.slice(-4).reverse();
+
+    if (recent_orders.length === 0) {
+        const empty_message = document.createElement("p");
+        empty_message.className = "empty-dashboard";
+        empty_message.textContent = "No orders have been recorded yet.";
+        dashboard_recent_orders.appendChild(empty_message);
+        return;
+    }
+
+    recent_orders.forEach(order => {
+        const row = document.createElement("div");
+        row.className = "recent-order";
+
+        const order_details = document.createElement("div");
+        const order_name = document.createElement("p");
+        order_name.className = "recent-order-name";
+        order_name.textContent = `Order ${order.orderNumber}`;
+        const table_number = document.createElement("p");
+        table_number.className = "recent-order-table";
+        table_number.textContent = `Table ${order.table_number}`;
+        order_details.append(order_name, table_number);
+
+        const order_total = document.createElement("p");
+        order_total.className = "recent-order-name";
+        order_total.textContent = `Shs. ${getOrderTotal(order).toLocaleString()}`;
+
+        const order_status = document.createElement("span");
+        order_status.className = "recent-order-status";
+        order_status.textContent = order.status_value || "Pending";
+
+        row.append(order_details, order_total, order_status);
+        dashboard_recent_orders.appendChild(row);
+    });
+}
+
+
+function showdiv(divToShow) {
+    welcome_page.style.visibility = divToShow === "welcome" ? "visible" : "hidden";
+    account_page.style.display = divToShow === "account" ? "block" : "none";
+    attendance_page.style.display = divToShow === "attendance" ? "block" : "none";
+    history_page.style.display = divToShow === "history" ? "block" : "none";
+    return_page.style.display = divToShow === "returned" ? "block" : "none";
+    accepted_page.style.display = divToShow === "confirmed" ? "block" : "none";
+    stock_page.style.display = divToShow === "inventory" ? "block" : "none";
+}
+
+sidebar_toggle.addEventListener("click", () => {
+    const is_expanded = sidebar_toggle.getAttribute("aria-expanded") === "true";
+    dashboard_content.classList.toggle("sidebar-collapsed", is_expanded);
+    left_side_panel.inert = is_expanded;
+    sidebar_toggle.setAttribute("aria-expanded", String(!is_expanded));
+    sidebar_toggle.setAttribute("aria-label", is_expanded ? "Expand navigation" : "Collapse navigation");
+    sidebar_toggle.querySelector("span").textContent = is_expanded ? "›" : "‹";
+});
+
 account_btn.addEventListener("click", () => {
-    showSection("account");
+    showdiv("account");
 })
 
 managerEditForm.addEventListener("submit", (event) => {
@@ -72,20 +239,68 @@ managerEditForm.addEventListener("submit", (event) => {
 });
 
 attendance_btn.addEventListener("click", () => {
-    showSection("attendance");
+    showdiv("attendance");
 })
 
 history_btn.addEventListener("click", () => {
-    showSection("history");
+    showdiv("history");
 })
 
 returned_btn.addEventListener("click", () => {
-    showSection("returned");
+    showdiv("returned");
 })
 
 accepted_btn.addEventListener("click", () => {
-    showSection("confirmed");
+    showdiv("confirmed");
 })
+
+inventory_btn.addEventListener("click", () => {
+    showdiv("inventory");
+})
+
+document.querySelector("#dashboard-attendance").addEventListener("click", () => {
+    showdiv("attendance");
+});
+
+document.querySelector("#dashboard-orders").addEventListener("click", () => {
+    showdiv("history");
+});
+
+document.querySelector("#dashboard-see-orders").addEventListener("click", () => {
+    showdiv("history");
+});
+
+document.querySelector("#dashboard-see-staff").addEventListener("click", () => {
+    showdiv("attendance");
+});
+
+document.querySelector("#dashboard-see-inventory").addEventListener("click", () => {
+    showdiv("inventory");
+});
+
+document.querySelector("#stock-add-link").addEventListener("click", () => {
+    showdiv("inventory");
+    stock_list.querySelector("input")?.focus();
+});
+
+stock_list.addEventListener("click", event => {
+    const save_button = event.target.closest(".stock-save");
+    if (!save_button) return;
+
+    const input = save_button.parentElement.querySelector("input");
+    const quantity = Number(input.value);
+    if (!Number.isSafeInteger(quantity) || quantity < 0) {
+        alert("Enter a whole stock quantity of zero or more.");
+        input.focus();
+        return;
+    }
+
+    inventory[save_button.dataset.item] = quantity;
+    localStorage.setItem(inventory_key, JSON.stringify(inventory));
+    transfer_data.postMessage({ type: "inventory-updated", data: inventory });
+    renderInventory();
+    updateWelcomeDashboard();
+});
 
 function showAttendanceData(list) {
     attendance_list.querySelectorAll(":scope > .attendance-row").forEach(staff_row => staff_row.remove());
@@ -142,7 +357,7 @@ else {
 
 
 //ADD A SETTING WHERE AFTER 24 HOURS AN ORDERS CLEAR
-//ADD A LOGGED OUT SECTION FOR STAFF AND ALSO ADD WELCOME STAFF NAME IN MENU AND LOGOUT BUTTON
+//ADD A LOGGED OUT div FOR STAFF AND ALSO ADD WELCOME STAFF NAME IN MENU AND LOGOUT BUTTON
 
 
 function getOrderTotal(order) {
@@ -227,6 +442,8 @@ function add_to_orderList(orderHistory) {
 window.addEventListener("DOMContentLoaded", () => {
     add_to_orderList(confirmed_orders);
     showAttendanceData(staff_list);
+    renderInventory();
+    updateWelcomeDashboard();
 })
 
 
@@ -234,11 +451,19 @@ transfer_data.onmessage = (event) => {
     const messageType = event.data?.type;
     const messageData = event.data?.data;
 
+    if (messageType === "inventory-updated" && messageData) {
+        inventory = messageData;
+        renderInventory();
+        updateWelcomeDashboard();
+        return;
+    }
+
     if (messageType === "LOGS") {
         if (Array.isArray(messageData)) {
             staff_list = messageData;
             localStorage.setItem("staff_details", JSON.stringify(staff_list));
             showAttendanceData(staff_list);
+            updateWelcomeDashboard();
         }
         return;
     }
@@ -252,6 +477,7 @@ transfer_data.onmessage = (event) => {
             returned_order.status_value = "Re-prepared";
             localStorage.setItem("confirmedOrders", JSON.stringify(confirmed_orders));
             add_to_orderList(confirmed_orders);
+            updateWelcomeDashboard();
         }
 
         return;
@@ -267,6 +493,7 @@ transfer_data.onmessage = (event) => {
             update_status.time_out = event.data.data.time_out;
             localStorage.setItem("staff_details", JSON.stringify(staff_list));
             showAttendanceData(staff_list);
+            updateWelcomeDashboard();
         }
 
         return;
@@ -281,6 +508,7 @@ transfer_data.onmessage = (event) => {
             cash_return.status_value = "Cash Returned";
             localStorage.setItem("confirmedOrders", JSON.stringify(confirmed_orders));
             add_to_orderList(confirmed_orders);
+            updateWelcomeDashboard();
         }
         return;
     }
@@ -296,6 +524,7 @@ transfer_data.onmessage = (event) => {
         confirmed_orders.push(incoming_order);
     }
     add_to_orderList(confirmed_orders);
+    updateWelcomeDashboard();
 }
 
 // localStorage.clear();
