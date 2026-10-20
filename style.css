@@ -16,7 +16,7 @@ body {
     grid-template-columns: 0.5fr 2fr 0.5fr;
     grid-template-rows: auto minmax(0, 1fr);
     align-content: start;
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 
 .title {
@@ -216,7 +216,7 @@ body {
 
 
 
-/*---------------------------------------ORDER div-----------------*/
+/*-------------------------ORDER div------------------------*/
 .order_sec {
     grid-column: 2/3;
     grid-row: 2;
@@ -353,12 +353,14 @@ body {
 
 
 
-/*-----------------------------------------------PAY SERVICE div--------------------*/
+/*--------------------------------------- PAY SERVICE div -----------------------*/
 .payserv_sec {
     grid-column: 3/4;
     grid-row: 2;
     min-height: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
     text-align: center;
     color: #ffffff;
     background-color: #acc8a2;

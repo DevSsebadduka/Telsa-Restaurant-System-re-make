@@ -123,6 +123,11 @@ return_btn.addEventListener("click", () => {
                     alert(`Items ${foods.join(' ,')} have been returned for re-preparation.`);
                     record_no.status_value = "Re-prepared";
                     localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+                    window.restaurantLogs.record("Orders", "Order sent for re-preparation", {
+                        orderNumber: record_no.orderNumber,
+                        table: record_no.table_number,
+                        items: foods
+                    });
 
                     transfer_data.postMessage({
                         type: "order-returned",
@@ -138,6 +143,11 @@ return_btn.addEventListener("click", () => {
                 alert("All food items have been returned for re-preparation.");
                 record_no.status_value = "Re-prepared";
                 localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+                window.restaurantLogs.record("Orders", "Order sent for re-preparation", {
+                    orderNumber: record_no.orderNumber,
+                    table: record_no.table_number,
+                    items: record_no.items
+                });
 
                 transfer_data.postMessage({
                     type: "order-returned",
@@ -159,15 +169,20 @@ return_btn.addEventListener("click", () => {
                 const foods = food_input.value.toLowerCase().split(/[ ,]+/);
                 if (getRecordByFoodDetail(foods)) {
                     alert(`Items ${foods.join(' ,')} have been refunded.`);
-                    location.reload();
-
                     record_no.status_value = "Cash Returned";
                     localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+                    window.restaurantLogs.record("Orders", "Order refunded", {
+                        orderNumber: record_no.orderNumber,
+                        table: record_no.table_number,
+                        items: foods,
+                        total: record_no.total
+                    });
 
                     transfer_data.postMessage({
                         type: "cash-returned",
                         table_number: record_no.table_number
                     });
+                    location.reload();
                 } else {
                     alert("Items do not match this order.");
                 }
@@ -177,6 +192,12 @@ return_btn.addEventListener("click", () => {
                 alert("All food items have been refunded.");
                 record_no.status_value = "Cash Returned";
                 localStorage.setItem('confirmedOrders', JSON.stringify(get_records));
+                window.restaurantLogs.record("Orders", "Order refunded", {
+                    orderNumber: record_no.orderNumber,
+                    table: record_no.table_number,
+                    items: record_no.items,
+                    total: record_no.total
+                });
 
                 transfer_data.postMessage({
                     type: "cash-returned",
@@ -243,17 +264,37 @@ function confirmCurrentOrder() {
         items: orders.map(order => ({ ...order })),
         total: Number(Total),
         status_value: order_status,
-        payment: my_clicked_btn
+        payment: my_clicked_btn,
+        confirmedAt: new Date().toISOString()
     };
 
+    const stock_changes = [];
     orders.forEach(order => {
+        const previous_quantity = inventory[order.Starter];
         inventory[order.Starter] -= Number(order.qty);
+        stock_changes.push({
+            item: order.Starter,
+            change: -Number(order.qty),
+            previousQuantity: previous_quantity,
+            newQuantity: inventory[order.Starter]
+        });
     });
     localStorage.setItem(inventory_key, JSON.stringify(inventory));
     transfer_data.postMessage({ type: "inventory-updated", data: inventory });
     refreshMenuStockButtons();
+    window.restaurantLogs.record("Inventory", "Stock deducted for order", {
+        orderNumber: confirmed_order.orderNumber,
+        changes: stock_changes
+    }, new Date(confirmed_order.confirmedAt));
     confirmed_orders.push(confirmed_order);
     localStorage.setItem('confirmedOrders', JSON.stringify(confirmed_orders));
+    window.restaurantLogs.record("Orders", "Order confirmed", {
+        orderNumber: confirmed_order.orderNumber,
+        table: confirmed_order.table_number,
+        items: confirmed_order.items,
+        total: confirmed_order.total,
+        payment: confirmed_order.payment
+    }, new Date(confirmed_order.confirmedAt));
     transfer_data.postMessage({ type: 'confirmed-order', order: confirmed_order });
 
     orders = [];
@@ -279,6 +320,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 sign_out.addEventListener("click", () => {
+    if (sign_out.textContent === "SIGN IN") {
+        window.location.href = "menu_login.html";
+        return;
+    }
+
     let answer = confirm("Do you wish to sign out?");
 
     if (answer) {
@@ -286,15 +332,22 @@ sign_out.addEventListener("click", () => {
 
         if (!logged_in_staff) return;
 
+        const logout_timestamp = new Date();
         logged_in_staff.Status = "Logged Out";
-        logged_in_staff.time_out = new Date().toLocaleTimeString();
+        logged_in_staff.time_out = logout_timestamp.toLocaleTimeString();
+        logged_in_staff.lastActivityAt = logout_timestamp.toISOString();
         localStorage.setItem("staff_details", JSON.stringify(staff_list));
+        window.restaurantLogs.record("Attendance", "Staff logged out", {
+            staff: logged_in_staff.staff,
+            role: logged_in_staff.role
+        }, logout_timestamp);
         transfer_data.postMessage({
             type: "Sign-out",
             data: {
                 staff: logged_in_staff.staff,
                 Status: logged_in_staff.Status,
-                time_out: logged_in_staff.time_out
+                time_out: logged_in_staff.time_out,
+                lastActivityAt: logged_in_staff.lastActivityAt
             }
         });
         localStorage.removeItem("current_staff");

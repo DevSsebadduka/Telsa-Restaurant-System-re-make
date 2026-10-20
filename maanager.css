@@ -203,14 +203,15 @@ body {
 .sidebar-toggle {
     position: absolute;
     z-index: 10;
-    top: 1rem;
+    top: 0.5rem;
     left: 1rem;
     display: grid;
     width: 2.6rem;
     height: 2.6rem;
     place-items: center;
     color: var(--berry-dark);
-    background: rgba(255, 255, 255, 0.82);
+    /* background: rgba(255, 255, 255, 0.82); */
+    background: transparent;
     border: 1px solid rgba(100, 35, 63, 0.14);
     border-radius: 0.7rem;
     box-shadow: 0 5px 14px rgba(26, 37, 23, 0.1);
@@ -225,7 +226,6 @@ body {
 
 .sidebar-toggle span {
     font-size: 2rem;
-    line-height: 1;
 }
 
 .welcome {
@@ -247,6 +247,10 @@ body {
     width: 100%;
     max-width: none;
 }
+
+
+
+/*----------------WELCOME -----------------*/
 
 .welcome-manager {
     position: relative;
@@ -314,6 +318,7 @@ body {
 .dashboard-btns:hover {
     background: var(--berry-dark);
     transform: translateY(-2px);
+    color: white;
 }
 
 .dashboard-btns-light {
@@ -326,12 +331,12 @@ body {
     position: absolute;
     z-index: 2;
     right: 1.6rem;
-    bottom: 1.3rem;
+    bottom: 0.4rem;
     display: flex;
     align-items: center;
     gap: 0.45rem;
     color: var(--sage-deep);
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
@@ -733,7 +738,7 @@ body {
 
 /*-----------account page------------*/
 
-.account-details, .staff-attendance, .order-history, .orders-returned, .orders-confirmed, .stock-inventory {
+.account-details, .staff-attendance, .order-history, .orders-returned, .orders-confirmed, .stock-inventory, .logs {
     display: none;
     height: 100%;
     background: rgba(234, 242, 239, 0.55);
@@ -742,11 +747,85 @@ body {
     padding: 0 1rem;
 }
 
-.account-details > h3, .staff-attendance > h3, .order-history > h3, .orders-returned > h3, .orders-confirmed > h3 {
-    padding: 1.2rem 1rem 0.85rem 4rem;
+.account-details {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(113, 139, 105, 0.45) transparent;
+}
+
+.account-content {
+    width: min(100%, 1500px);
+    min-height: calc(100% - 1rem);
+    margin: 0 auto;
+    padding-bottom: 1rem;
+    container-type: inline-size;
+}
+
+.account-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 3.2rem clamp(0.5rem, 1vw, 1rem) 1.2rem;
+}
+
+.account-heading .panel-detail {
+    margin-bottom: 0.35rem;
+}
+
+.account-heading h3 {
+    margin-bottom: 0.35rem;
     color: var(--berry-dark);
-    letter-spacing: 0.12em;
-    text-align: left;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    text-transform: none;
+}
+
+.account-heading > div > p:last-child {
+    color: var(--ink);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.account-heading-badge {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    color: var(--sage-deep);
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(113, 139, 105, 0.2);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.account-heading-badge i {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--sage-deep);
+    border-radius: 50%;
+}
+
+.account-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(20rem, 0.8fr);
+    gap: 1rem;
+    min-height: clamp(30rem, calc(100dvh - 15rem), 52rem);
+}
+
+.update-headings {
+    display: flex;
+    justify-content: space-between;
+}
+
+.update-headings > h3, .account-details > h3 {
+    letter-spacing: 0.08em;
+    padding: 1.2rem 1rem 1rem 4rem; 
+    color: var(--berry-dark);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.25rem;
 }
 
 .stock-inventory {
@@ -951,20 +1030,25 @@ body {
 
 .account-box {
     display: grid;
-    grid-template-columns: minmax(180px, 0.8fr) minmax(300px, 1.6fr);
+    grid-template-columns: minmax(10rem, 0.7fr) minmax(0, 1.3fr);
+    min-width: 0;
+    min-height: 100%;
     gap: 1rem;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.42);
-    border: 1px solid var(--line);
-    border-radius: 0.55rem;
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    border-radius: 0.85rem;
     box-shadow: 0 8px 18px rgba(26, 37, 23, 0.08);
 }
 
 .profile-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     background: linear-gradient(180deg, rgba(156, 182, 147, 0.18), rgba(234, 242, 239, 0.75));
     border: 1px solid rgba(113, 139, 105, 0.2);
-    border-radius: 0.6rem;
-    padding: 1.25rem;
+    border-radius: 0.75rem;
+    padding: 1.5rem 1rem;
     text-align: center;
 }
 
@@ -981,7 +1065,7 @@ body {
 .profile-box h4 {
     color: var(--berry-dark);
     margin-bottom: 0.3rem;
-    font-size: 1.25rem;
+    font-size: clamp(1.05rem, 3cqi, 1.25rem);
 }
 
 .profile-box p {
@@ -991,62 +1075,80 @@ body {
 
 .account-info {
     display: grid;
-    grid-template-columns: repeat(2, minmax(160px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
     gap: 0.9rem;
 }
 
 .info-row {
+    justify-content: center;
+    min-width: 0;
     background: rgba(255, 255, 255, 0.5);
     border: 1px solid rgba(26, 37, 23, 0.08);
-    border-radius: 0.5rem;
-    padding: 0.8rem 0.9rem;
+    border-radius: 0.65rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
 }
 
 .info-row span {
-    font-size: 0.7rem;
+    font-size: clamp(0.62rem, 1.7cqi, 0.7rem);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--berry-dark);
 }
 
 .info-row strong {
-    font-size: 0.95rem;
+    font-size: clamp(0.85rem, 2.3cqi, 0.95rem);
     color: var(--ink);
+    overflow-wrap: break-word;
 }
 
 .account-info-editing {
     display: grid;
-    grid-template-columns: minmax(150px, 0.7fr) minmax(250px, 1.6fr);
+    grid-template-columns: minmax(8rem, 0.65fr) minmax(0, 1.35fr);
+    align-items: stretch;
+    min-width: 0;
+    min-height: 100%;
     gap: 1rem;
-    margin-top: 1rem;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.38);
-    border: 1px solid var(--line);
-    border-radius: 0.55rem;
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    border-radius: 0.85rem;
     box-shadow: 0 8px 18px rgba(26, 37, 23, 0.08);
 }
 
 .logo-panel {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.8rem;
     background: linear-gradient(180deg, rgba(156, 182, 147, 0.18), rgba(234, 242, 239, 0.75));
     border: 1px solid rgba(113, 139, 105, 0.2);
-    border-radius: 0.6rem;
+    border-radius: 0.75rem;
     padding: 1rem;
 }
 
+.logo-panel span {
+    color: var(--sage-deep);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: center;
+}
+
 .big-logo {
-    width: clamp(90px, 12vw, 140px);
+    width: clamp(76px, 8vw, 120px);
     object-fit: contain;
 }
 
 .edit-form {
     display: grid;
+    align-content: space-between;
     gap: 0.9rem;
+    min-width: 0;
 }
 
 .edit-details {
@@ -1064,6 +1166,8 @@ body {
 }
 
 .edit-details input {
+    width: 100%;
+    min-width: 0;
     padding: 0.7rem 0.8rem;
     border: 1px solid rgba(26, 37, 23, 0.14);
     border-radius: 0.45rem;
@@ -1085,9 +1189,70 @@ body {
 }
 
 @media (max-width: 900px) {
-    .account-card,
-    .account-editor {
+    .account-layout {
         grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .account-box,
+    .account-info-editing {
+        min-height: 20rem;
+    }
+}
+
+@media (max-width: 760px) {
+    .account-box,
+    .account-info-editing {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-box,
+    .logo-panel {
+        min-height: 10rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .account-details {
+        padding-inline: 0.75rem;
+    }
+
+    .account-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-inline: 0.25rem;
+    }
+
+    .account-heading-badge {
+        align-self: flex-start;
+    }
+
+    .account-info {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+    }
+}
+
+@container (max-width: 760px) {
+    .account-layout {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .account-box,
+    .account-info-editing {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .account-info {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+    }
+
+    .profile-box,
+    .logo-panel {
+        min-height: 10rem;
     }
 }
 
@@ -1095,10 +1260,10 @@ body {
 
 .headers {
     display: grid;
-    grid-template-columns: minmax(7rem, 1fr) minmax(8rem, 1fr) minmax(8rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
+    grid-template-columns: minmax(7rem, 1fr) minmax(16rem, 2fr) minmax(7rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
     gap: 1rem;
     padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(156, 182, 147, 0.42);
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 0.4rem 0.4rem 0 0;
     color: var(--berry-dark);
@@ -1111,7 +1276,7 @@ body {
     display: grid;
     grid-template-columns: minmax(7rem, 1fr) minmax(8rem, 1fr) minmax(8rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
     padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(156, 182, 147, 0.42);
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 0.4rem 0.4rem 0 0;
     color: var(--berry-dark);
@@ -1120,7 +1285,7 @@ body {
     text-transform: uppercase;
 }
  
-/*---------attendance ----------*/
+/*------------ attendance ----------*/
 
 .history-list, .attendance-list {
     display: flex;
@@ -1130,6 +1295,7 @@ body {
     background: transparent;
     height: calc(100vh - 12rem);
     height: calc(100dvh - 12rem);
+    font-family: Georgia, "Times New Roman", serif;
     overflow-y: scroll;
     scrollbar-width: none;
     padding-bottom: 1rem;
@@ -1188,20 +1354,13 @@ body {
     padding: 1rem;
 }
 
-.headers {
-    display: grid;
-    grid-template-columns: minmax(7rem, 1fr) minmax(16rem, 2fr) minmax(7rem, 1fr) minmax(7rem, 1fr) minmax(7rem, 1fr);
-    gap: 1rem;
-    padding: 0 1rem;
-    color: var(--berry-dark);
-    background: rgba(156, 182, 147, 0.42);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    margin: 0.5rem 0;
-}
-
 .headers h3 {
     margin: 1rem 0;
+    color: var(--berry-dark);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
 }
 
 .total-money {
@@ -1229,4 +1388,178 @@ body {
     font-weight: 700;
     letter-spacing: 0.02em;
 
+}
+
+
+/*------------ logs ----------*/
+
+
+.logs {
+    border: 1px solid var(--line);
+    border-radius: 0.45rem;
+    box-shadow: 0 6px 16px rgba(26, 37, 23, 0.08);
+    overflow-wrap: anywhere;
+}
+
+.logs-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    padding: 0.7rem 0;
+}
+
+.logs-filters label {
+    display: grid;
+    gap: 0.3rem;
+    color: var(--berry-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.logs-filters select {
+    min-width: 10rem;
+    padding: 0.55rem 0.7rem;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--line);
+    border-radius: 0.35rem;
+    font: inherit;
+}
+
+.logs .headers {
+    grid-template-columns: minmax(10rem, 1fr) minmax(12rem, 1.4fr) minmax(7rem, 0.6fr);
+}
+
+.logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: calc(100vh - 16rem);
+    min-height: 12rem;
+    overflow-y: auto;
+    padding: 0.75rem 0;
+}
+
+.log-row {
+    display: grid;
+    grid-template-columns: minmax(10rem, 1fr) minmax(12rem, 1.4fr) minmax(7rem, 0.6fr);
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.58);
+    border: 1px solid var(--line);
+    border-radius: 0.4rem;
+    font-size: 0.82rem;
+}
+
+.log-details-link {
+    width: fit-content;
+    color: var(--berry-dark);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.log-detail-content {
+    height: 100%;
+    overflow: auto;
+    padding: 1rem;
+    color: var(--ink);
+}
+
+.log-detail-content h2 {
+    margin: 0 0 0.5rem;
+    color: var(--berry-dark);
+}
+
+.log-detail-content p {
+    margin-bottom: 1rem;
+    color: var(--sage-deep);
+}
+
+.log-detail-events,
+.log-detail-fields,
+.log-detail-list {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.log-detail-event {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    background: rgba(255, 255, 255, 0.58);
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+}
+
+.log-detail-event h3 {
+    margin: 0;
+    color: var(--berry-dark);
+    font-size: 0.92rem;
+}
+
+.log-detail-content .log-detail-event-time {
+    margin: 0;
+    color: var(--sage-deep);
+    font-size: 0.76rem;
+}
+
+.log-detail-field {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.7fr) minmax(0, 1.3fr);
+    gap: 0.8rem;
+    padding: 0.75rem 0.9rem;
+    background: rgba(234, 242, 239, 0.8);
+    border-radius: 0.4rem;
+}
+
+.log-detail-field strong {
+    color: var(--berry-dark);
+}
+
+.log-detail-field span {
+    overflow-wrap: anywhere;
+}
+
+.log-detail-group {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.6rem;
+}
+
+.log-detail-group h3 {
+    margin: 0;
+    color: var(--berry-dark);
+    font-size: 0.9rem;
+}
+
+.log-detail-card {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.7rem;
+    background: rgba(234, 242, 239, 0.45);
+    border: 1px solid var(--line);
+    border-radius: 0.4rem;
+}
+
+.log-detail-value {
+    margin: 0;
+    padding: 0.75rem 0.9rem;
+    background: rgba(234, 242, 239, 0.8);
+    border-radius: 0.4rem;
+}
+
+@media (max-width: 700px) {
+    .logs .headers,
+    .log-row {
+        grid-template-columns: minmax(6rem, 0.8fr) minmax(9rem, 1.2fr) minmax(6rem, 0.6fr);
+        gap: 0.5rem;
+    }
+
+    .log-row {
+        padding: 0.7rem 0.55rem;
+        font-size: 0.72rem;
+    }
 }

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="maanager.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/winbox@0.2.82/dist/css/winbox.min.css">
     <title>Manager Dashboard</title>
 </head>
 <body>
@@ -13,7 +14,7 @@
         <div class="left-side-panel">
             <div class="header">
                 <img src="./images/telsa_light.png" class="pfp">
-                <label class="name">Mr. Telsa</label>
+                <label class="name">Ms. Sofia</label>
             </div>
 
             <div class="details">
@@ -23,7 +24,7 @@
                 <button class="btn1" id="accepted">Confirmed Orders</button>
                 <button class="btn1" id="returned_btn">Returned Orders</button>
                 <button class="btn1" id="inventory_btn">Stock Inventory</button>
-                <button class="btn1">Random Button</button>
+                <button class="btn1" id="logs_btn">LOGS</button>
             </div>
             
             <div class="out">
@@ -46,6 +47,7 @@
                             <div class="welcome-btns">
                                 <button class="dashboard-btns" id="dashboard-attendance" type="button">View staff attendance</button>
                                 <button class="dashboard-btns dashboard-btns-light" id="dashboard-orders" type="button">Browse order history</button>
+                                <button class="dashboard-btns" id="dashboard-logs" type="button">View activity logs</button>
                             </div>
                         </div>
                         <div class="circle1" aria-hidden="true"></div>
@@ -66,7 +68,7 @@
                             <span class="dashboard-stat-icon" aria-hidden="true">⌑</span>
                             <span class="dashboard-stat-label">Orders recorded</span>
                             <strong class="dashboard-stat-value" id="dash-order-count">0</strong>
-                            <span class="dashboard-stat-foot">Across all order activity</span>
+                            <span class="dashboard-stat-foot">Today</span>
                         </div>
                         <div class="dashboard-stat">
                             <span class="dashboard-stat-icon" aria-hidden="true">✓</span>
@@ -138,70 +140,87 @@
             </div>
 
             <div class="account-details">
-                <h3>ACCOUNT DETAILS</h3>
-                <div class="account-box">
-                    <div class="profile-box">
-                        <img src="./images/telsa_light.png" class="account-avatar" alt="manager avatar">
-                        <h4 id="manager-name-display">Mr. Telsa</h4>
-                        <p>Restaurant Manager</p>
+                <div class="account-content">
+                    <div class="account-heading">
+                        <div>
+                            <p class="panel-detail">MANAGER PROFILE</p>
+                            <h3>Account details</h3>
+                            <p>Review your restaurant access and keep your contact details up to date.</p>
+                        </div>
+                        <span class="account-heading-badge"><i></i> Manager account</span>
                     </div>
 
-                    <div class="account-info">
-                        <div class="info-row">
-                            <span>Full Name</span>
-                            <strong id="info-name">Mr. Telsa</strong>
+                    <div class="account-layout">
+                        <div class="account-box">
+                            <div class="profile-box">
+                                <img src="./images/telsa_light.png" class="account-avatar" alt="manager avatar">
+                                <h4 id="manager-name-display">Mr. Telsa</h4>
+                                <p>Restaurant Manager</p>
+                            </div>
+
+                            <div class="account-info">
+                                <div class="info-row">
+                                    <span>Full Name</span>
+                                    <strong id="info-name">Mr. Telsa</strong>
+                                </div>
+                                <div class="info-row">
+                                    <span>Role</span>
+                                    <strong>Manager</strong>
+                                </div>
+                                <div class="info-row">
+                                    <span>Restaurant</span>
+                                    <strong>Telsa Restaurant</strong>
+                                </div>
+                                <div class="info-row">
+                                    <span>Access Level</span>
+                                    <strong>Full Control</strong>
+                                </div>
+                                <div class="info-row">
+                                    <span>Shift</span>
+                                    <strong>08:00 AM - 06:00 PM</strong>
+                                </div>
+                                <div class="info-row">
+                                    <span>Contact</span>
+                                    <strong>+256 7100 200 300</strong>
+                                </div>
+                            </div>
                         </div>
-                        <div class="info-row">
-                            <span>Role</span>
-                            <strong>Manager</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>Restaurant</span>
-                            <strong>Telsa Restaurant</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>Access Level</span>
-                            <strong>Full Control</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>Shift</span>
-                            <strong>08:00 AM - 06:00 PM</strong>
-                        </div>
-                        <div class="info-row">
-                            <span>Contact</span>
-                            <strong>+256 7100 200 300</strong>
+
+                        <div class="account-info-editing">
+                            <div class="logo-panel">
+                                <img src="./images/telsa_light.png" class="big-logo" alt="Telsa logo">
+                                <span>PROFILE SETTINGS</span>
+                            </div>
+
+                            <form class="edit-form" id="manager-edit-form">
+                                <div class="edit-details">
+                                    <label for="manager-name">Name</label>
+                                    <input type="text" id="manager-name" value="Mr. Telsa">
+                                </div>
+
+                                <div class="edit-details">
+                                    <label for="manager-email">Email</label>
+                                    <input type="email" id="manager-email" value="mr.telsa@telsa.com">
+                                </div>
+
+                                <div class="edit-details">
+                                    <label for="manager-passward">Password</label>
+                                    <input type="password" id="manager-passward" value="Telsa123">
+                                </div>
+
+                                <button type="submit" class="save-btn">Save Changes</button>
+                            </form>
                         </div>
                     </div>
-                </div>
-
-                <div class="account-info-editing">
-                    <div class="logo-panel">
-                        <img src="./images/telsa_light.png" class="big-logo" alt="Telsa logo">
-                    </div>
-
-                    <form class="edit-form" id="manager-edit-form">
-                        <div class="edit-details">
-                            <label for="manager-name">Name</label>
-                            <input type="text" id="manager-name" value="Mr. Telsa">
-                        </div>
-
-                        <div class="edit-details">
-                            <label for="manager-email">Email</label>
-                            <input type="email" id="manager-email" value="mr.telsa@telsa.com">
-                        </div>
-
-                        <div class="edit-details">
-                            <label for="manager-passward">Password</label>
-                            <input type="password" id="manager-passward" value="Telsa123">
-                        </div>
-
-                        <button type="submit" class="save-btn">Save Changes</button>
-                    </form>
                 </div>
             </div>
 
+
             <div class="staff-attendance">
-                <h3>STAFF ATTENDANCE</h3>
+                <div class="update-headings">
+                    <h3>STAFF ATTENDANCE</h3>
+                    <h3 class="todays-date"></h3>
+                </div>
                 <div class="staff_headings">
                     <h3>NAME</h3>
                     <h3>ROLE</h3>
@@ -214,7 +233,11 @@
             </div>
 
             <div class="order-history">
-                <h3>ORDER HISTORY</h3>
+                <div class="update-headings">
+                    <h3>ORDER HISTORY</h3>
+                    <h3 class="todays-date"></h3>
+                </div>
+                
                 <div class="headers">
                     <h3>ORDER NO.</h3>
                     <h3>ORDERS</h3>
@@ -222,8 +245,7 @@
                     <h3>STATUS</h3>
                     <h3>Payment Method</h3>
                 </div>
-                <div class="history-list">
-                </div>
+                <div class="history-list"></div>
 
                 <div class="total-money">
                     <p class="money" id="gross-sales">Gross Sales: 0</p>
@@ -233,7 +255,10 @@
             </div>
 
             <div class="orders-returned">
-                <h3>RETURNED ORDERS</h3>
+                <div class="update-headings">
+                    <h3>RETURNED ORDERS</h3>
+                    <h3 class="todays-date"></h3>
+                </div>
                 <div class="headers">
                     <h3>ORDER NO.</h3>
                     <h3>ORDERS</h3>
@@ -250,7 +275,10 @@
             </div>
 
             <div class="orders-confirmed">
-                <h3>CONFIRMED ORDERS</h3>
+                <div class="update-headings">
+                    <h3>CONFIRMED ORDERS</h3>
+                    <h3 class="todays-date"></h3>
+                </div>
                 <div class="headers">
                     <h3>ORDER NO.</h3>
                     <h3>ORDERS</h3>
@@ -271,7 +299,6 @@
                     <div>
                         <p class="panel-detail">MENU ITEM TRACKING</p>
                         <h3>STOCK INVENTORY</h3>
-                        <p>Set each item’s on-hand quantity. Confirmed orders automatically deduct the quantities ordered.</p>
                     </div>
                     <button class="stock-page-action" id="stock-add-link" type="button">Add stock to menu</button>
                 </div>
@@ -297,10 +324,42 @@
                     <div class="stock-list" id="stock-list"></div>
                 </div>
             </div>
+
+            <div class="logs">
+                <div class="update-headings">
+                    <h3>LOGS</h3>
+                    <h3 class="todays-date"></h3>
+                </div>
+                <div class="logs-filters">
+                    <label>
+                        Date
+                        <select id="logs-date-filter" aria-label="Filter logs by date">
+                            <option value="all">All dates</option>
+                        </select>
+                    </label>
+                    <label>
+                        Type
+                        <select id="logs-category-filter" aria-label="Filter logs by type">
+                            <option value="all">All activity</option>
+                            <option value="Orders">Orders</option>
+                            <option value="Inventory">Inventory</option>
+                            <option value="Attendance">Attendance</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="headers">
+                    <h3>DATE</h3>
+                    <h3>ACTION</h3>
+                    <h3>DETAILS</h3>
+                </div>
+                <div class="logs-list"></div>
+            </div>
         </div>
     </div>
 
     <script src="menu-data.js"></script>
+    <script src="LOGS.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/winbox@0.2.82/dist/winbox.bundle.min.js"></script>
     <script src="manager.js"></script>
 </body>
 </html>

@@ -35,14 +35,16 @@ login_btn.addEventListener("click", () => {
             }, 2000);
 
             check_username.status_check = "Logged In";
+            const login_timestamp = new Date();
 
             const staff_login = {
                 staff: check_username.username,
                 role: check_username.role,
                 shift: check_username.shift,
                 Status: check_username.status_check,
-                time: new Date().toLocaleTimeString(),
-                time_out: ""
+                time: login_timestamp.toLocaleTimeString(),
+                time_out: "",
+                lastActivityAt: login_timestamp.toISOString()
             }
 
             const old_staff = attendance.find(
@@ -63,6 +65,11 @@ login_btn.addEventListener("click", () => {
 
             localStorage.setItem("staff_details", JSON.stringify(attendance));
             localStorage.setItem("current_staff", staff_login.staff);
+            window.restaurantLogs.record("Attendance", "Staff logged in", {
+                staff: staff_login.staff,
+                role: staff_login.role,
+                shift: staff_login.shift
+            }, login_timestamp);
 
         }
 
